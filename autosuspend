@@ -1,0 +1,20 @@
+#! /bin/sh -e
+PIDFILE=/var/run/unsuspendd.pid
+
+_send () {
+    if [ -e ${PIDFILE} ]; then
+        kill -$1  $(cat ${PIDFILE})
+    else
+        echo "unsuspendd not run, aborting"
+        exit 1
+    fi
+}
+
+case "$1" in
+    prevent)  _send  SIGUSR1  ;;
+    okay) _send SIGUSR2 ;;
+    *)
+        echo "Usage: $0  (prevent|okay)"
+        exit 1
+    ;;
+esac

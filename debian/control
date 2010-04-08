@@ -1,0 +1,12 @@
+Source: unsuspendd
+Section: core
+Priority: optional
+Maintainer: Alexander V. Nikolaev <avn@daemon.hole.ru>
+Build-Depends: debhelper (>= 7)
+XCS-Cross-Host-Build-Depends: debhelper (>= 7)
+Standards-Version: 3.7.3
+
+Package: unsuspendd
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Userspace support for control suspending
