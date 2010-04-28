@@ -49,9 +49,9 @@ sigusr(int signo)
         if(++lock)
             set_autosuspend(0);
     }
-    else if(signo == SIGUSR2)
+    else if(signo == SIGUSR2 && lock) // do nothing if lock==0
     {
-        if(--lock)
+        if(--lock==0)
             set_autosuspend(1);
     }
     debug("lock == %d", lock);
@@ -75,10 +75,16 @@ main(int argc, char **argv)
         err(1, "unsuspendd: Already run\n");
     if(!_debug)
         daemon(0, 0);
+     FILE *pidf = fopen(pidfile, "w");
+     if(!pidf)
+        err(1, "unsuspend: can't write to pid file\n");
+     fprintf(pidf, "%d", getpid());
+     fclose(pidf);
      signal(SIGUSR1, sigusr);
      signal(SIGUSR2, sigusr);
      signal(SIGTERM, cleanup);
      signal(SIGINT, cleanup);
+     set_autosuspend(1);
      while(true)
         sleep(INT_MAX);
 }

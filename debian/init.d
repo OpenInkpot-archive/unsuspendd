@@ -12,7 +12,7 @@ case "$1" in
 		echo -n "Starting ${DESC}: "
 		start-stop-daemon --start --quiet \
             --pidfile ${PID} \
-            --exec /usr/sbin/unsuspendd \
+            --exec /usr/sbin/unsuspendd 
 		echo "unsuspendd."
 		;;
 	stop)
