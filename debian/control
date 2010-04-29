@@ -9,4 +9,5 @@ Standards-Version: 3.7.3
 Package: unsuspendd
 Architecture: any
 Depends: ${shlibs:Depends}
+Conflicts: madaudio (<< 0.4.12), oi-hotplug (<< 0.3)
 Description: Userspace support for control suspending
