@@ -5,15 +5,15 @@ _send () {
     if [ -e ${PIDFILE} ]; then
         kill -$1  $(cat ${PIDFILE})
     else
-        echo "unsuspendd not run, aborting"
+        logger -s -p daemon.info -t autosuspend "unsuspendd not run, aborting"
         exit 1
     fi
 }
 
 if [ -z "$1" ]; then
     case "$(cat /sys/power/autosuspend)" in 
-        0)  echo "Autosuspend off" ;;
-        1) echo "Autosuspend off" ;;
+        0) echo "Autosuspend off" ;;
+        1) echo "Autosuspend on" ;;
     esac
 fi
 

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <syslog.h>
 #include <unistd.h>
 
 static const char* autosuspend = "/sys/power/autosuspend";
@@ -18,15 +19,10 @@ int lock=0;
 static void
 debug(const char *fmt,...)
 {
-    if(_debug)
-    {
-        fprintf(stderr, "unsuspendd: ");
-        va_list ap;
-        va_start(ap, fmt);
-        vfprintf(stderr, fmt, ap);
-        va_end(ap);
-        fprintf(stderr, "\n");
-    }
+    va_list ap;
+    va_start(ap, fmt);
+    vsyslog(LOG_INFO, fmt, ap);
+    va_end(ap);
 }
 
 static void
@@ -43,7 +39,7 @@ set_autosuspend(int mode)
 static void
 sigusr(int signo)
 {
-    debug("Got signal: %s", strsignal(signo));
+    debug("Got signal: %s, lock == %d", strsignal(signo), lock);
     if(signo == SIGUSR1)
     {
         if(++lock)
@@ -54,7 +50,13 @@ sigusr(int signo)
         if(--lock==0)
             set_autosuspend(1);
     }
-    debug("lock == %d", lock);
+    debug("set lock counter = %d", lock);
+}
+
+static void
+sighup(int signo)
+{
+    debug("Got signal: %s, lock == %d", strsignal(signo), lock);
 }
 
 static void
@@ -80,8 +82,15 @@ main(int argc, char **argv)
         err(1, "unsuspend: can't write to pid file\n");
      fprintf(pidf, "%d", getpid());
      fclose(pidf);
+
+     int flags = LOG_NDELAY | LOG_PID;
+     if(_debug)
+        flags |= LOG_PERROR;
+     openlog("unsuspendd", flags, LOG_DAEMON);
+
      signal(SIGUSR1, sigusr);
      signal(SIGUSR2, sigusr);
+     signal(SIGHUP, sighup);
      signal(SIGTERM, cleanup);
      signal(SIGINT, cleanup);
      set_autosuspend(1);
