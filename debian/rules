@@ -1,49 +1,40 @@
 #!/usr/bin/make -f
 
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+CFLAGS=-g -Os
 
 build: build-stamp
-
 build-stamp:
 	dh_testdir
-
-	$(DEB_HOST_GNU_TYPE)-gcc -Wall -o unsuspendd unsuspendd.c
-
+	$(MAKE) CC=$(DEB_HOST_GNU_TYPE)-gcc CFLAGS="$(CFLAGS)"
 	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
-
-	rm -f unsuspendd
-
+	$(MAKE) clean
 	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs
 
-	install -m755 unsuspendd $(CURDIR)/debian/unsuspendd/usr/sbin
-	install autosuspend ${CURDIR}/debian/unsuspendd/usr/bin
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/unsuspendd prefix=/usr
 
 binary-indep: build install
 
-# Build architecture-dependent files here.
 binary-arch: build install
 	dh_testdir -s
 	dh_testroot -s
 	dh_installinit -s -r -- start 50 S . stop 50 0 6 .
 	dh_link -s
-	dh_strip -s
+	dh_strip -s --dbg-package=unsuspendd-dbg
 	dh_compress -s
 	dh_fixperms -s
 	dh_installdeb -s
 	dh_shlibdeps -s
 	dh_gencontrol -s
-	dh_md5sums -s
 	dh_builddeb -s
 
 binary: binary-indep binary-arch

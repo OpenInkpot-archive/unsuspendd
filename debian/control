@@ -9,5 +9,26 @@ Standards-Version: 3.7.3
 Package: unsuspendd
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: madaudio (<< 0.4.12), oi-hotplug (<< 0.3)
-Description: Userspace support for control suspending
+Conflicts: madaudio (<< 0.4.14), oi-hotplug (<< 0.4)
+Description: Userspace autosuspend arbiter
+ There are applications which need autosuspend disabled for proper operation,
+ such as music/video players, sound recorders etc.  Additionally, it is useful
+ to disable autosuspend in some state, such as "USB cable is plugged in".
+ .
+ Kernel autosuspend support does not arbitrate autosuspend state, so this
+ userspace helper is necessary to figure out proper autosuspend state in
+ presence of multiple power-concious programs.
+
+Package: unsuspendd-dbg
+Architecture: any
+Depends: unsuspendd (= ${binary:Version})
+Description: Userspace autosuspend arbiter -- debugging symbols
+ There are applications which need autosuspend disabled for proper operation,
+ such as music/video players, sound recorders etc.  Additionally, it is useful
+ to disable autosuspend in some state, such as "USB cable is plugged in".
+ .
+ Kernel autosuspend support does not arbitrate autosuspend state, so this
+ userspace helper is necessary to figure out proper autosuspend state in
+ presence of multiple power-concious programs.
+ .
+ This package provides debugging symbols.
