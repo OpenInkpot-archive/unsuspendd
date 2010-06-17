@@ -1,4 +1,5 @@
 MK_CFLAGS=-std=gnu99
+prefix ?= /usr/local
 
 all: unsuspendd autosuspend
 
@@ -10,3 +11,7 @@ autosuspend: autosuspend.c unsuspend.h
 
 clean:
 	rm -f unsuspendd autosuspend
+
+install: all
+	install -m755 -D unsuspendd $(DESTDIR)$(prefix)/sbin/unsuspendd
+	install -m755 -D autosuspend $(DESTDIR)$(prefix)/bin/autosuspend
