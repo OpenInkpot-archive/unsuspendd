@@ -1,4 +1,4 @@
-unsuspendd (2.0) zelazny; urgency=low
+unsuspendd (2.0~0.bradbury.1) bradbury; urgency=low
 
   * Rewrite using named locks and socket-locks.
 
