@@ -665,6 +665,14 @@ main(int argc, char **argv)
     if (use_syslog)
         openlog("unsuspendd", LOG_CONS | LOG_PID, LOG_DAEMON);
 
+    /* Reap children */
+    struct sigaction sigchld_info = {
+        .sa_flags = SA_NOCLDWAIT,
+        .sa_sigaction = SIG_DFL,
+    };
+    if (sigaction(SIGCHLD, &sigchld_info, NULL) == -1)
+        crit("unsuspendd: sigaction: %s", strerror(errno));
+
     server_fd = setup_server_socket(socket_path);
 
     if (daemonize)
