@@ -287,14 +287,24 @@ setup_server_socket(const char* socket_path)
     if (server_fd == -1)
         crit("unable to open socket: %s", strerror(errno));
 
-    /* There may be socket aready created. Remove it. */
-    unlink(socket_path);
-
     struct sockaddr_un addr = {
         .sun_family = AF_UNIX,
     };
     memcpy(addr.sun_path, socket_path,
            min(UNIX_PATH_MAX, strlen(socket_path) + 1));
+
+    /*
+     * Try to connect and bail out if there is something on another side of
+     * socket.
+     */
+    if (connect(server_fd, (const struct sockaddr *)&addr, sizeof(addr)) == 0) {
+        crit("server is already running");
+    } else if (errno != ECONNREFUSED) {
+        crit("unable to check server presence: %s", strerror(errno));
+    }
+
+    /* There may be socket file aready. Remove it. */
+    unlink(socket_path);
 
     if (bind(server_fd, (struct sockaddr *)&addr,
              sizeof(struct sockaddr_un)) == -1)
