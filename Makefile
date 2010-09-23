@@ -1,4 +1,4 @@
-MK_CFLAGS=-std=gnu99
+MK_CFLAGS=-std=gnu99 -Wall
 prefix ?= /usr/local
 
 all: unsuspendd autosuspend
