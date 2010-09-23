@@ -668,7 +668,7 @@ main(int argc, char **argv)
     /* Reap children */
     struct sigaction sigchld_info = {
         .sa_flags = SA_NOCLDWAIT,
-        .sa_sigaction = SIG_DFL,
+        .sa_handler = SIG_DFL,
     };
     if (sigaction(SIGCHLD, &sigchld_info, NULL) == -1)
         crit("unsuspendd: sigaction: %s", strerror(errno));
