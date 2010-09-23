@@ -166,7 +166,7 @@ int main(int argc, char **argv)
             usage(1);
         status(socket_path, command);
     } else if (!strcmp(command, "runlock")) {
-        if (optind > argc + 2)
+        if (optind + 2 > argc)
             usage(1);
         run(socket_path, argv0 ? argv0 : argv[optind + 1], argv + optind + 1);
     } else {
