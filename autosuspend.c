@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <err.h>
 #include <string.h>
+#include <getopt.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <sys/un.h>
@@ -105,7 +106,7 @@ status(const char *socket_path, const char *cmd)
 }
 
 static void
-run(const char *socket_path, char **argv)
+run(const char *socket_path, const char *argv0, char **argv)
 {
     int client = sock_connect(socket_path, 255);
 
@@ -113,24 +114,33 @@ run(const char *socket_path, char **argv)
         if (i != client)
             close(i);
 
-    if (execvp(argv[0], argv) == -1)
+    if (execvp(argv0, argv) == -1)
         err(255, "unable to run program");
 }
 
 static void
 usage(int exit_code)
 {
-    printf("Usage: autosuspend [-f <path>] (lock|unlock) <name> | status | info | runlock <args>\n");
+    printf("Usage: autosuspend [-f <path>] (lock|unlock) <name> | status | info |\n");
+    printf("                   [--argv0 <argv0>] runlock <cmd> <args>\n");
     exit(exit_code);
 }
+
+static const struct option longopts[] = {
+    { "argv0", required_argument, NULL, 'a' },
+    {}
+};
 
 int main(int argc, char **argv)
 {
     int opt;
     const char *socket_path = DEFAULT_SOCKET_PATH;
+    const char *argv0 = NULL;
 
-    while ((opt = getopt(argc, argv, "f:h")) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:f:h", longopts, NULL)) != -1) {
         switch(opt) {
+        case 'a':
+            argv0 = optarg;
         case 'h':
             usage(0);
         case 'f':
@@ -158,7 +168,7 @@ int main(int argc, char **argv)
     } else if (!strcmp(command, "runlock")) {
         if (optind > argc + 2)
             usage(1);
-        run(socket_path, argv + optind + 1);
+        run(socket_path, argv0 ? argv0 : argv[optind + 1], argv + optind + 1);
     } else {
         usage(1);
     }
