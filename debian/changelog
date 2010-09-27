@@ -1,3 +1,9 @@
+unsuspendd (2.2.1) zelazny; urgency=low
+
+  * Fix failure on startup if there is no socket file on fs.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Mon, 27 Sep 2010 19:47:08 +0700
+
 unsuspendd (2.2) zelazny; urgency=low
 
   * Fix segfault if arguments are missing in runlock command
