@@ -299,7 +299,7 @@ setup_server_socket(const char* socket_path)
      */
     if (connect(server_fd, (const struct sockaddr *)&addr, sizeof(addr)) == 0) {
         crit("server is already running");
-    } else if (errno != ECONNREFUSED) {
+    } else if (errno != ECONNREFUSED && errno != ENOENT) {
         crit("unable to check server presence: %s", strerror(errno));
     }
 
